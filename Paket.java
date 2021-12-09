@@ -1,14 +1,14 @@
 public class Paket {
     
     // The parameters
-    public String name;
+    public int name;
     public int value;
     public int width;
     public int length;
     
     
     // The creation
-    public Paket(String name, int value, int width, int length){
+    public Paket(int name, int value, int width, int length){
         this.value = value;
         this.width = width;
         this.length = length;
@@ -19,6 +19,9 @@ public class Paket {
         return (float) value / (width * length);
     }
 
+    public int getArea(){
+        return width*length;
+    }
     public String toString(){
         return  "Name: \t"  + name   + "\n" +
                 "Wert: \t"  + value  + "\n" +
