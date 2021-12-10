@@ -1,0 +1,42 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch RucksackMain",
+            "request": "launch",
+            "mainClass": "RucksackMain",
+            "projectName": "Rucksackproblem_295747b8"
+        },
+        {
+            "type": "java",
+            "name": "Launch RucksackMain",
+            "request": "launch",
+            "mainClass": "RucksackMain",
+            "projectName": "RucksackProblem_71a6713a"
+        },
+        {
+            "type": "java",
+            "name": "Launch RucksackMain",
+            "request": "launch",
+            "mainClass": "RucksackMain",
+            "projectName": "RucksackProblem_dd69bf45"
+        },
+        {
+            "type": "java",
+            "name": "Launch Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Launch RucksackMain",
+            "request": "launch",
+            "mainClass": "RucksackMain",
+            "projectName": "RucksackProblem_ce8caa17"
+        }
+    ]
+}

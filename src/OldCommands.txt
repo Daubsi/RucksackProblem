@@ -1,0 +1,57 @@
+/*
+        startPoint = findStart(Space, startPoint);
+            
+
+            if(startPoint[0] != -1){
+                
+                if(doesFit(Space, packageList[i], startPoint)[0] && doesFit(Space, packageList[i], startPoint)[1]){
+                    System.out.println(packageList[i].toString());
+                    printPackage(Space, packageList[i], startPoint, evaluateOrientation(Space, packageList[i], startPoint));
+                    //printSpace(Space);
+                }
+                else if(doesFit(Space, packageList[i], startPoint)[0] && occupiedCellsAroundPackage(Space, packageList[i].length, packageList[i].width, startPoint) >= packageList[i].length * 2 + packageList[i].width * 2){
+                    System.out.println(packageList[i].toString());
+                    printPackage(Space, packageList[i], startPoint, false);
+                    //printSpace(Space);
+                }
+                else if(doesFit(Space, packageList[i], startPoint)[0] && occupiedCellsAroundPackage(Space, packageList[i].width, packageList[i].length, startPoint) >= packageList[i].length * 2 + packageList[i].width * 2){
+                    System.out.println(packageList[i].toString());
+                    printPackage(Space, packageList[i], startPoint, true);
+                    //printSpace(Space);
+                }
+                else{
+
+                }
+
+            }else{
+                break;
+            }
+
+            System.out.println("Dieses Paket konnte nicht eingefügt werden:");
+                        System.out.println(packageList[i].toString());
+                        i++;
+            startPoint[0] += 1;
+                                startPoint[1] = 1;
+            
+            printSpace(Space);
+        */
+
+// TODO Code flexibler für tests gestalten
+// bsp booelan test = true; oder so
+// beispielsweise die Ausgabe von Handlungsschritten unterbinden
+// Oder auch die überschprungenen Pakete nicht im Detail anzeigen
+// Generelle Informationen über die Platzierten und Übersprungenen Pakete machen
+
+// TODO Lösungsansatz für Platzierung (Brute Force)
+// Einfach mit den beiden Drehungen alle punkte testen und den mit den meisten anliegenden Seiten wird genommen 
+// Dh. es wird die Position gespeichert, wenn nAnliegenderFlächen < vorheriger ist
+// Optimierung: Falls alle Seiten anliegen nicht weitersuchen sondern break
+// Return ist die Position als int Liste also int[] pos = {y, x}
+
+// TODO Textausgabe für die Handlungsschritte des Algorithmus
+// Die sortierte Liste {P4, P2, P7, ...} ausgeben
+// Dann die einzelnen Schritte zb Normaldrehung: 5 freie Flächen / Gedreht: 2 freie Flächen
+// Text anzeige zb "P5 muss an (3|4) in Normaldrehung"
+
+// TODO Funktion um die Lösung zu bewerten
+// also (Wert aller Pakete) / (Fläche aller Pakete) Verglichen mit (Lösungswert) / (Fläche)
