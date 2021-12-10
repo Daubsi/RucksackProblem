@@ -28,5 +28,4 @@ public class Paket {
                 "Breite: "  + width  + "\n" +
                 "Länge: \t" + length + "\n";
     }
-
 }
