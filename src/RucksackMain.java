@@ -2,8 +2,8 @@ public class RucksackMain {
 
     // Modeling space with an array
     // Size of space
-    static int lengthOfSpace = 100;
-    static int widthOfSpace  = 100;
+    static int lengthOfSpace = 30;
+    static int widthOfSpace  = 80;
     static int[][] Space = new int[widthOfSpace+2][lengthOfSpace+2];
 
     // List of the given packages
@@ -49,9 +49,29 @@ public class RucksackMain {
 
     // Prints the space array in the console
     static void printSpace(int[][] space){
+        int max = 0;
         for(int i = 1; i < space.length-1; i++){
             for(int j = 1; j < space[i].length-1; j++){
-                System.out.print(space[i][j] + " ");
+                if(space[i][j] > max) max = space[i][j];
+            }
+        }
+        int Spaces = 4;
+        if(max > 9) Spaces = 3;
+        if(max > 99) Spaces = 2;
+        if(max > 999) Spaces = 1;
+        
+        for(int i = 1; i < space.length-1; i++){
+            for(int j = 1; j < space[i].length-1; j++){
+                int spaceNeeded = Spaces;
+                String printMessage = "";
+                if(space[i][j] < 1000) spaceNeeded = Spaces - 2;
+                if(space[i][j] < 100 ) spaceNeeded = Spaces - 1;
+                if(space[i][j] < 10  ) spaceNeeded = Spaces - 0;
+                
+                for(int nSpaces = 0; nSpaces < spaceNeeded; nSpaces++){
+                    printMessage += " ";
+                }
+                System.out.print(space[i][j] + printMessage + " ");
             }
         System.out.println();
         }
@@ -61,10 +81,10 @@ public class RucksackMain {
     // Checks the amount of 1's sourrounding a Cell
     static int checkSourroundings(int[][] space, int xValue, int yValue){
         int nOccupiedCells = 0;
-        if(space[yValue+1][xValue  ]==1) nOccupiedCells++;
-        if(space[yValue-1][xValue  ]==1) nOccupiedCells++;
-        if(space[yValue  ][xValue+1]==1) nOccupiedCells++;
-        if(space[yValue  ][xValue-1]==1) nOccupiedCells++;
+        if(space[yValue+1][xValue  ]!=0) nOccupiedCells++;
+        if(space[yValue-1][xValue  ]!=0) nOccupiedCells++;
+        if(space[yValue  ][xValue+1]!=0) nOccupiedCells++;
+        if(space[yValue  ][xValue-1]!=0) nOccupiedCells++;
         return nOccupiedCells;
     }
 
@@ -178,7 +198,7 @@ public class RucksackMain {
         for(int i = startPoint[0]; i < startPoint[0] + currentPaket.length; i++){
             for (int j = startPoint[1]; j < startPoint[1] + currentPaket.width; j++){
                 if (i <= widthOfSpace && j <= lengthOfSpace){
-                    if(space[i][j] == 1) orientationA = false;
+                    if(space[i][j] != 0) orientationA = false;
                 }else orientationA = false;   
             }
         }
@@ -186,7 +206,7 @@ public class RucksackMain {
         for(int i = startPoint[0]; i < startPoint[0] + currentPaket.width; i++){
             for (int j = startPoint[1]; j < startPoint[1] + currentPaket.length; j++){
                 if(i <= widthOfSpace && j <= lengthOfSpace){
-                    if (space[i][j] == 1) orientationB = false;
+                    if (space[i][j] != 0) orientationB = false;
                 }else orientationB = false;
             }
         }
@@ -198,13 +218,13 @@ public class RucksackMain {
         if(rotate){
             for(int i = startPoint[0]; i < startPoint[0] + currentPaket.width; i++){
                 for (int j = startPoint[1]; j < startPoint[1] + currentPaket.length; j++){
-                    space[i][j] = 1;
+                    space[i][j] = currentPaket.name;
                 }
             }
         }else{
             for(int i = startPoint[0]; i < startPoint[0] + currentPaket.length; i++){
                 for (int j = startPoint[1]; j < startPoint[1] + currentPaket.width; j++){
-                    space[i][j] = 1;
+                    space[i][j] = currentPaket.name;
                 }
             }
         }
@@ -279,5 +299,6 @@ public class RucksackMain {
         }
 
         endInfo();
+
     }
 }
