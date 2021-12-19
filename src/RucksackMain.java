@@ -3,18 +3,20 @@ public class RucksackMain {
     // Modeling space with an array
     // Size of space
     static int lengthOfSpace = 30;
-    static int widthOfSpace  = 80;
+    static int widthOfSpace  = 30;
     static int[][] Space = new int[widthOfSpace+2][lengthOfSpace+2];
 
     // List of the given packages
-    static Paket[] packageList = new Paket[100];
+    static Paket[] packageList = new Paket[200];
 
-    static boolean testMode = true;
+    // testMode saves on some print Statements
+    static boolean testMode = false;
 
-    static int[] placingPoint = {0, 0};
+    static int[] placingPoint = {1, 1};
 
     static boolean rotation;
 
+    // General Inforamtion for later
     static int nPlacedPackages = 0;
     static int nSkippedPackages = 0;
     static int valueOfAllPackages = 0;
@@ -22,6 +24,7 @@ public class RucksackMain {
     static int valueOfPlacedPackages = 0;
     static int areaOfPlacedPackages = 0;
 
+    // Creates random sample packages
     static void prepareSamples(Paket[] packageList, int min, int max){
         for(int i = 0; i < packageList.length; i++){
             int name = i + 1;
@@ -31,14 +34,12 @@ public class RucksackMain {
             packageList[i] = new Paket(name, value, width, length);
         }
     }
-
-    // Y/X Coordinate of the point to continue placing packages from
-    //static int[] startPoint = {0,0};
     
     // Fills the Array with 0's except the borders they get filled with 1's
     static void preapareSpace(int [][] space){
         for (int i = 0; i < space.length; i++) {
             for (int j = 0; j < space[i].length; j++) {
+                // If at a border fill 1 else fill 0
                 if((i == space.length-1 || i == 0) || (j == space[i].length-1 || j == 0)){
                     space[i][j] = 1;
                 }
@@ -48,13 +49,7 @@ public class RucksackMain {
     }
 
     // Prints the space array in the console
-    static void printSpace(int[][] space){
-        int max = 0;
-        for(int i = 1; i < space.length-1; i++){
-            for(int j = 1; j < space[i].length-1; j++){
-                if(space[i][j] > max) max = space[i][j];
-            }
-        }
+    static void printSpace(int[][] space, int max){
         int Spaces = 4;
         if(max > 9) Spaces = 3;
         if(max > 99) Spaces = 2;
@@ -80,12 +75,12 @@ public class RucksackMain {
 
     // Checks the amount of 1's sourrounding a Cell
     static int checkSourroundings(int[][] space, int xValue, int yValue){
-        int nOccupiedCells = 0;
-        if(space[yValue+1][xValue  ]!=0) nOccupiedCells++;
-        if(space[yValue-1][xValue  ]!=0) nOccupiedCells++;
-        if(space[yValue  ][xValue+1]!=0) nOccupiedCells++;
-        if(space[yValue  ][xValue-1]!=0) nOccupiedCells++;
-        return nOccupiedCells;
+        int nFreeCells = 0;
+        if(space[yValue+1][xValue  ]==0) nFreeCells++;
+        if(space[yValue-1][xValue  ]==0) nFreeCells++;
+        if(space[yValue  ][xValue+1]==0) nFreeCells++;
+        if(space[yValue  ][xValue-1]==0) nFreeCells++;
+        return nFreeCells;
     }
 
     // Sorts the Packages according to the attribut ValuePerArea
@@ -105,61 +100,60 @@ public class RucksackMain {
 
     // Finds the point where to continue placing packages
     static int[] placePackage(int[][] space, Paket currentPaket){
-
-        int mostOccupiedCells = 0;
+        int mostFreeCells = 1000;
         int[] bestPlacingPosition = {0,0};
         boolean rotation = false;
 
         for (int i = 1; i < space.length-1; i++) {
             for (int j = 1; j < space[i].length-1; j++) {
+                
                 int[] currentPosition = {i, j};
+                // If the given point is empty
                 if(space[i][j]==0){
+                    // Checking the better Rotation
                     if(doesFit(space, currentPaket, currentPosition)[0]){
-                        if(occupiedCellsAroundPackage(space, currentPaket.length, currentPaket.width, currentPosition) >
-                            mostOccupiedCells){
+                        if(freeCellsAroundPackage(space, currentPaket.length, currentPaket.width, currentPosition) <
+                            mostFreeCells){
                             bestPlacingPosition = currentPosition;
                             rotation = false;
-                            break;
+                            mostFreeCells = freeCellsAroundPackage(space, currentPaket.length, currentPaket.width, currentPosition);
                         }
                     }else if(doesFit(space, currentPaket, currentPosition)[1]){
-                        if(occupiedCellsAroundPackage(space, currentPaket.width, currentPaket.length, currentPosition) >
-                            mostOccupiedCells){
+                        if(freeCellsAroundPackage(space, currentPaket.width, currentPaket.length, currentPosition) <
+                            mostFreeCells){
                             bestPlacingPosition = currentPosition;
                             rotation = true;
-                            break;
+                            mostFreeCells = freeCellsAroundPackage(space, currentPaket.length, currentPaket.width, currentPosition);
                         }
                     }
                 }
             }
         }
-        // if kein platz gefunden
-        // gebe -1 aus
-        if(bestPlacingPosition[0] == 0){
-            bestPlacingPosition[0] = -1;
-        }
-
+        // place 0:   if it fits or not
+        // place 1:   if it should be rotated or not
+        // place 2,3: the placing position
         int[] returnList = {0,0,0,0};
 
-        // wenn kein fehler
-        // gebe 1 aus
-        if(bestPlacingPosition[0] != -1)
+        // If there was no space return -1
+        if(bestPlacingPosition[0] == 0){
+            returnList[0] = -1;
+        }else{
             returnList[0] = 1;
+        }
 
-        // rotation als 0 oder 1 an stelle 1 speichern
+        // Saving the boolean as 0 or 1
         if(rotation) returnList[1] = 1;
-        else returnList[1] = 0;
+        else         returnList[1] = 0;
 
+        // The coordinates
         returnList[2] = bestPlacingPosition[0];
         returnList[3] = bestPlacingPosition[1];
 
-        // stelle 0: ob es passt oder nicht
-        // stelle 1: drehen ja oder nein
-        // stelle 2,3: koordinaten des punktes
         return returnList;
     }
 
     // Checks the amount of available spaces around a package
-    static int occupiedCellsAroundPackage(int[][] space, int currentPaketLength, int currentPaketWidth, int[] startPoint){
+    static int freeCellsAroundPackage(int[][] space, int currentPaketLength, int currentPaketWidth, int[] startPoint){
         fillSpace(space, currentPaketLength, currentPaketWidth, startPoint, true);
         int nAllAvailableCells = 0;
         for(int i = startPoint[0]; i < startPoint[0] + currentPaketLength && i < space.length-1; i++){
@@ -182,13 +176,6 @@ public class RucksackMain {
         }
     }
 
-    // Checking if the given orientation is good
-    static boolean evaluateOrientation(int[][] space, Paket currentPaket, int[] startPoint){
-        if(occupiedCellsAroundPackage(space, currentPaket.length, currentPaket.width, startPoint) < 
-           occupiedCellsAroundPackage(space, currentPaket.width, currentPaket.length, startPoint)){
-              return false;
-        }else return true;
-    }
 
     // Checking if the package would fit in both orientations
     static boolean[] doesFit(int[][] space, Paket currentPaket, int[] startPoint){
@@ -210,10 +197,11 @@ public class RucksackMain {
                 }else orientationB = false;
             }
         }
-
+        // Returning the orientations that fit
         return new boolean[] {orientationA, orientationB};
     }
 
+    // Prints a package in the Space Array
     static void printPackage(int[][] space, Paket currentPaket, int[] startPoint, boolean rotate){
         if(rotate){
             for(int i = startPoint[0]; i < startPoint[0] + currentPaket.width; i++){
@@ -234,6 +222,7 @@ public class RucksackMain {
         System.out.println(currentPaket.toString());
     }
 
+    // Counts the amount of empty Cells
     static int emptyCells(int[][] space){
         int emptyCells = 0;
         for(int i = 1; i < space.length-1; i++){
@@ -247,7 +236,7 @@ public class RucksackMain {
 
     static void endInfo(){
         System.out.println("Finale Lösung:");
-        printSpace(Space);
+        printSpace(Space, packageList.length);
         System.out.println("Menge an Platzierten Paketen:                             " + nPlacedPackages);
         System.out.println("Menge an Übersprungenen Paketen:                          " + nSkippedPackages);
         System.out.println("Wert von allen Paketen:                                   " + valueOfAllPackages);
@@ -275,10 +264,11 @@ public class RucksackMain {
                 placingPoint[0] = placePackage(Space, packageList[i])[2];
                 placingPoint[1] = placePackage(Space, packageList[i])[3];
 
-                if(placePackage(Space, packageList[i])[1] == 1)
-                    rotation = true;
-                else rotation = false;
-                    printPackage(Space, packageList[i], placingPoint, rotation);
+                if(placePackage(Space, packageList[i])[1] == 1){
+                      rotation = true;
+                }else rotation = false;
+                    
+                printPackage(Space, packageList[i], placingPoint, rotation);
 
                 nPlacedPackages ++;
                 valueOfPlacedPackages += packageList[i].value;
@@ -292,7 +282,7 @@ public class RucksackMain {
             
             if(!testMode){
                 printPackageInfo(packageList[i]);
-                printSpace(Space);
+                printSpace(Space, packageList.length);
             }
                 
             

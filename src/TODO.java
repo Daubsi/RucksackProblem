@@ -5,3 +5,5 @@
 
 // TODO PrepareSamples() verbessern
 // min und max Größe hinzufügen
+
+// TODO Formatierung verbessern
