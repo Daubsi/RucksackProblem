@@ -7,7 +7,7 @@ public class RucksackMain {
     static int[][] Space = new int[widthOfSpace+2][lengthOfSpace+2];
 
     // List of the given packages
-    static Paket[] packageList = new Paket[200];
+    static Paket[] packageList = new Paket[20];
 
     // testMode saves on some print Statements
     static boolean testMode = false;
@@ -98,59 +98,6 @@ public class RucksackMain {
         }
     }
 
-    // Finds the point where to continue placing packages
-    static int[] placePackage(int[][] space, Paket currentPaket){
-        int mostFreeCells = 1000;
-        int[] bestPlacingPosition = {0,0};
-        boolean rotation = false;
-
-        for (int i = 1; i < space.length-1; i++) {
-            for (int j = 1; j < space[i].length-1; j++) {
-                
-                int[] currentPosition = {i, j};
-                // If the given point is empty
-                if(space[i][j]==0){
-                    // Checking the better Rotation
-                    if(doesFit(space, currentPaket, currentPosition)[0]){
-                        if(freeCellsAroundPackage(space, currentPaket.length, currentPaket.width, currentPosition) <
-                            mostFreeCells){
-                            bestPlacingPosition = currentPosition;
-                            rotation = false;
-                            mostFreeCells = freeCellsAroundPackage(space, currentPaket.length, currentPaket.width, currentPosition);
-                        }
-                    }else if(doesFit(space, currentPaket, currentPosition)[1]){
-                        if(freeCellsAroundPackage(space, currentPaket.width, currentPaket.length, currentPosition) <
-                            mostFreeCells){
-                            bestPlacingPosition = currentPosition;
-                            rotation = true;
-                            mostFreeCells = freeCellsAroundPackage(space, currentPaket.length, currentPaket.width, currentPosition);
-                        }
-                    }
-                }
-            }
-        }
-        // place 0:   if it fits or not
-        // place 1:   if it should be rotated or not
-        // place 2,3: the placing position
-        int[] returnList = {0,0,0,0};
-
-        // If there was no space return -1
-        if(bestPlacingPosition[0] == 0){
-            returnList[0] = -1;
-        }else{
-            returnList[0] = 1;
-        }
-
-        // Saving the boolean as 0 or 1
-        if(rotation) returnList[1] = 1;
-        else         returnList[1] = 0;
-
-        // The coordinates
-        returnList[2] = bestPlacingPosition[0];
-        returnList[3] = bestPlacingPosition[1];
-
-        return returnList;
-    }
 
     // Checks the amount of available spaces around a package
     static int freeCellsAroundPackage(int[][] space, int currentPaketLength, int currentPaketWidth, int[] startPoint){
@@ -255,24 +202,47 @@ public class RucksackMain {
         preapareSpace(Space);
         sortPackages(packageList);
 
-        for(int i = 0; i < packageList.length; i++){
-            valueOfAllPackages += packageList[i].value;
-            areaOfAllPackages += packageList[i].getArea();
-            // if Paket passt
-            if(placePackage(Space, packageList[i])[0] == 1){
+        for(int e = 0; e < packageList.length; e++){
+            valueOfAllPackages += packageList[e].value;
+            areaOfAllPackages += packageList[e].getArea();
 
-                placingPoint[0] = placePackage(Space, packageList[i])[2];
-                placingPoint[1] = placePackage(Space, packageList[i])[3];
+            int mostFreeCells = 1000;
+            int[] bestPlacingPosition = {-1,0};
+            boolean rotation = false;
 
-                if(placePackage(Space, packageList[i])[1] == 1){
-                      rotation = true;
-                }else rotation = false;
+            for (int i = 1; i < Space.length-1; i++) {
+                for (int j = 1; j < Space[i].length-1; j++) {
                     
-                printPackage(Space, packageList[i], placingPoint, rotation);
+                    int[] currentPosition = {i, j};
+                    // If the given point is empty
+                    if(Space[i][j]==0){
+                        // Checking the better Rotation
+                        if(doesFit(Space, packageList[e], currentPosition)[0]){
+                            if(freeCellsAroundPackage(Space, packageList[e].length, packageList[e].width, currentPosition) <
+                                mostFreeCells){
+                                bestPlacingPosition = currentPosition;
+                                rotation = false;
+                                mostFreeCells = freeCellsAroundPackage(Space, packageList[e].length, packageList[e].width, currentPosition);
+                            }
+                        }else if(doesFit(Space, packageList[e], currentPosition)[1]){
+                            if(freeCellsAroundPackage(Space, packageList[e].width, packageList[e].length, currentPosition) <
+                                mostFreeCells){
+                                bestPlacingPosition = currentPosition;
+                                rotation = true;
+                                mostFreeCells = freeCellsAroundPackage(Space, packageList[e].length, packageList[e].width, currentPosition);
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            if(bestPlacingPosition[0] != -1){
+                printPackage(Space, packageList[e], bestPlacingPosition, rotation);
 
                 nPlacedPackages ++;
-                valueOfPlacedPackages += packageList[i].value;
-                areaOfPlacedPackages += packageList[i].getArea();
+                valueOfPlacedPackages += packageList[e].value;
+                areaOfPlacedPackages += packageList[e].getArea();
 
             }else{
                 if(!testMode)
@@ -281,14 +251,15 @@ public class RucksackMain {
             }
             
             if(!testMode){
-                printPackageInfo(packageList[i]);
+                printPackageInfo(packageList[e]);
                 printSpace(Space, packageList.length);
             }
                 
-            
         }
 
         endInfo();
+
+        
 
     }
 }

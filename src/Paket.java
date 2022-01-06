@@ -22,6 +22,7 @@ public class Paket {
     public int getArea(){
         return width*length;
     }
+    
     public String toString(){
         return  "Name: \t"  + name   + "\n" +
                 "Wert: \t"  + value  + "\n" +

@@ -6,4 +6,4 @@
 // TODO PrepareSamples() verbessern
 // min und max Größe hinzufügen
 
-// TODO Formatierung verbessern
+// TODO Formatierungsalgorithmus visuell gestalten
